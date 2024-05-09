@@ -16,10 +16,16 @@ enum V {
     NORTH = 0
 };
 
+// Get the integration point within a unit area of the Riemann Sum
 typedef struct Point {
     enum H h_point;
     enum V v_point;
 } Point;
+// Declare dictionary to match user input strings with appropriate Point instances
+typedef struct PointDictionary {
+    const char* str;
+    Point pt;
+} PointDictionary;
 
 int main(int argc, char *argv[]) {
 
