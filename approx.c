@@ -6,14 +6,14 @@
 
 // To get point of integration for each area, divide the enum values by 2 before finding x*i
 enum H {
-    WEST = -2,
-    CENTER = -1,
+    WEST = 2,
+    CENTER = 1,
     EAST = 0
 };
 
 enum V {
-    SOUTH = -2,
-    MIDDLE = -1,
+    SOUTH = 2,
+    MIDDLE = 1,
     NORTH = 0
 };
 
@@ -32,12 +32,15 @@ int main(int argc, char *argv[]) {
     int m = atoi(argv[1]);
     // x-splits
     int n = atoi(argv[2]);
+    if (m <= 1 || n <= 1) {
+        printf("For approximation, at lease a partition of one unit is needed, please reconsider m and n.\n");
+    }
     // x-bounds
-    int a = atof(argv[4]);
-    int b = atof(argv[5]);
+    float a = atof(argv[4]);
+    float b = atof(argv[5]);
     // y-bounds
-    int c = atof(argv[6]);
-    int d = atof(argv[7]);
+    float c = atof(argv[6]);
+    float d = atof(argv[7]);
     // (optional) point. for now assign default values, we'll handle user input as enum later
     Point integral_pt;
     integral_pt.h_point = EAST;
@@ -46,21 +49,26 @@ int main(int argc, char *argv[]) {
     // We'll get to this later
     char *f_str = argv[3];
 
-    // area differentials
+    // area differentials and slice area
     float differential_x = (b-a)/m;
     float differential_y = (d-c)/n;
+    float unit_area = differential_x*differential_y;
 
-    // Debug
-    printf("%f\n",differential_x);
-    printf("%f\n",differential_y);
+    printf("%f %f %f\n",differential_x,differential_y,unit_area);
 
+    float total = 0.0;
+    for (int x_index = 1;x_index<=m;x_index++) {
+        // x integrating point: x* = a + (i-h)diffx
+        float point_x = a + (x_index-(integral_pt.h_point/2))*differential_x;
+        for (int y_index = 1;y_index<=n;y_index++) {
+            // y integrating point: y* = c + (i-v)diffy
+            float point_y = c + (y_index-(integral_pt.v_point/2))*differential_y;
+            // dummy function for testing
+            float res = point_x + point_y;
+            float unit_approx = res*unit_area;
+            total += unit_approx;
+        }
+    }
 
-}
-
-float differentialY(int n,float c,float d) {
-    return (d-c)/n;
-}
-
-float differentialX(int m,float a,float b) {
-    return (b-a)/m;
+    printf("The total result is %.2f\n",total);
 }
