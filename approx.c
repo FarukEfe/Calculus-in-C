@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "operator.c"
 
 // This project could be a good recap of your learnings in c from 1XC3
 // Make sure you use gdb for debugging and valgrind to check for memory leaks
@@ -58,13 +57,14 @@ int main(int argc, char *argv[]) {
 
     float total = 0.0;
     for (int x_index = 1;x_index<=m;x_index++) {
-        // x integrating point: x* = a + (i-h)diffx
+        // x integrating point: x* = a + (i-h)*dx
         float point_x = a + (x_index-(integral_pt.h_point/2))*differential_x;
         for (int y_index = 1;y_index<=n;y_index++) {
-            // y integrating point: y* = c + (i-v)diffy
+            // y integrating point: y* = c + (i-v)*dy
             float point_y = c + (y_index-(integral_pt.v_point/2))*differential_y;
             // dummy function for testing
             float res = point_x + point_y;
+            // multiply function result by unit area (dA)
             float unit_approx = res*unit_area;
             total += unit_approx;
         }
