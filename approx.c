@@ -1,31 +1,8 @@
 #include "operator.c"
+#include "dictionary.c"
 
 // This project could be a good recap of your learnings in c from 1XC3
 // Make sure you use gdb for debugging and valgrind to check for memory leaks
-
-// To get point of integration for each area, divide the enum values by 2 before finding x*i
-enum H {
-    WEST = 2,
-    CENTER = 1,
-    EAST = 0
-};
-
-enum V {
-    SOUTH = 2,
-    MIDDLE = 1,
-    NORTH = 0
-};
-
-// Get the integration point within a unit area of the Riemann Sum
-typedef struct Point {
-    enum H h_point;
-    enum V v_point;
-} Point;
-// Declare dictionary to match user input strings with appropriate Point instances
-typedef struct PointDictionary {
-    const char* str;
-    Point pt;
-} PointDictionary;
 
 int main(int argc, char *argv[]) {
 
