@@ -45,12 +45,42 @@ unsigned hash(char *s) {
     return hashval % HASHSIZE;
 }
 
-Point *find(char *key) {
+PointDictionary *find(char *key) {
     PointDictionary *np;
     for (np = table[hash(key)]; np != NULL; np = np->next) {
         if (strcmp(key, np->key) == 0)
-          return &np->value;
+          return np;
     }
     return NULL;
 }
 
+Point find_value(char *key) {
+    PointDictionary *np = find(key);
+    return np->value;
+}
+
+PointDictionary *install(char *key, Point value) {
+    PointDictionary *np;
+    unsigned hashvalue;
+    if ((np = find(key)) == NULL) { // Set np as the instance at key
+        np = (PointDictionary *)malloc(sizeof(*np));
+        if (np == NULL || (np->key = strdup(key)) == NULL) return NULL;
+        hashvalue = hash(key); // Get next hash in table
+        np->next = table[hashvalue]; // Set next link to the new hash according to the table
+        table[hashvalue] = np;
+    } else {
+        free((void *) np->value); // Free up previous value assignment
+        np->value = value;
+        return np;
+    }
+}
+
+int main() {
+    PointDictionary *dummydict;
+    Point nw;
+    nw.h_point = 0;
+    nw.v_point = -1;
+    dummydict = install("NW",nw);
+    Point test = find_value("NW");
+    printf("%d %d\n",test.h_point,test.v_point);
+}
