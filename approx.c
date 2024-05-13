@@ -10,6 +10,8 @@ int main(int argc, char *argv[]) {
         printf("Arguments include: ./output <m> <n> <f> <a> <b> <c> <d> <point>(optional)\n");
         return 0;
     }
+    // Generate dictionary values for integration point
+    PointDictionary *point_dict = generate_directions();
     // y-splits
     int m = atoi(argv[1]);
     // x-splits
@@ -24,9 +26,8 @@ int main(int argc, char *argv[]) {
     float c = atof(argv[6]);
     float d = atof(argv[7]);
     // (optional) point. for now assign default values, we'll handle user input as enum later
-    Point integral_pt;
-    integral_pt.h_point = EAST;
-    integral_pt.v_point = NORTH;
+    Point integral_pt = find_value(argv[8]);
+    printf("%.1f %.1f\n",integral_pt.h_point/2.0,integral_pt.v_point/2.0);
 
     // We'll get to this later
     char *f_str = argv[3];
@@ -36,15 +37,15 @@ int main(int argc, char *argv[]) {
     float differential_y = (d-c)/n;
     float unit_area = differential_x*differential_y;
 
-    printf("%f %f %f\n",differential_x,differential_y,unit_area);
+    printf("%.2f %.2f %.2f\n",differential_x,differential_y,unit_area);
 
     float total = 0.0;
     for (int x_index = 1;x_index<=m;x_index++) {
         // x integrating point: x* = a + (i-h)*dx
-        float point_x = a + (x_index-(integral_pt.h_point/2))*differential_x;
+        float point_x = a + (x_index-(integral_pt.h_point/2.0))*differential_x;
         for (int y_index = 1;y_index<=n;y_index++) {
             // y integrating point: y* = c + (i-v)*dy
-            float point_y = c + (y_index-(integral_pt.v_point/2))*differential_y;
+            float point_y = c + (y_index-(integral_pt.v_point/2.0))*differential_y;
             // dummy function for testing
             float res = point_x + point_y;
             // multiply function result by unit area (dA)

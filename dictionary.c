@@ -56,7 +56,13 @@ PointDictionary *find(char *key) {
 
 Point find_value(char *key) {
     PointDictionary *np = find(key);
-    Point *val = np->value;
+    Point *val;
+    if (np == NULL) {
+        val->h_point = EAST;
+        val->v_point = NORTH;
+    } else {
+        val = np->value;
+    }
     return *val;
 }
 
@@ -111,11 +117,4 @@ PointDictionary *generate_directions() {
     for (int i=0;i<8;i++) {
         dict = install(keys[i],points[i]);
     }
-}
-
-int main() {
-    PointDictionary *point_dict = generate_directions();
-
-    Point test = find_value("W");
-    printf("%d %d\n",test.h_point,test.v_point);
 }
