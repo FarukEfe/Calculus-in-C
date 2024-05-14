@@ -24,12 +24,15 @@ void push(Stack *list, char item) {
     list->stack[list->head++] = item;
 }
 
-void pop(Stack *list) {
+char pop(Stack *list) {
     if (list->head == -1) {
         printf("No items on stack. Already emptied.\n");
-        return;
+        return '\0';
     }
+    //free(list->stack[list->head]);
+    char val = list->stack[list->head]; // Get current head item
     list->head--; // With the next push, the "popped" item will be overwritten
+    return val; // We want to return the popped item since we're using it for enqueue in this program
 }
 
 // Queue data structure
@@ -56,14 +59,18 @@ void enqueue(Queue *list, char item) {
     list->tail = 0;
 }
 
-void dequeue(Queue *list) {
+char dequeue(Queue *list) {
     if (list->head = -1) {
         printf("The queue is empty.\n");
-        return;
+        return '\0';
     }
-
+    char item = list->queue[0];
     for (int i=0;i<list->tail-1;i++) {
         list->queue[i] = list->queue[i+1];
     }
     list->head--;
+    if (list->head == -1) {
+        list->tail = -1;
+    }
+    return item;
 }
