@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_SIZE 100
 
@@ -21,7 +22,8 @@ void push(Stack *list, char item) {
         printf("Stack overflow. Cannot push new item.\n");
         return;
     }
-    list->stack[list->head++] = item;
+    list->head++;
+    list->stack[list->head] = item;
 }
 
 char pop(Stack *list) {
@@ -29,8 +31,9 @@ char pop(Stack *list) {
         printf("No items on stack. Already emptied.\n");
         return '\0';
     }
-    //free(list->stack[list->head]);
-    char val = list->stack[list->head]; // Get current head item
+    char *copy = strtok(list->stack,"\0"); // Copy stack
+    char val = copy[list->head]; // Get current head item
+    list->stack[list->head] = '\000';
     list->head--; // With the next push, the "popped" item will be overwritten
     return val; // We want to return the popped item since we're using it for enqueue in this program
 }
@@ -55,7 +58,8 @@ void enqueue(Queue *list, char item) {
         printf("Queue overflow, cannot enqueue new element.\n");
         return;
     }
-    list->queue[list->head++] = item;
+    list->head++;
+    list->queue[list->head] = item;
     list->tail = 0;
 }
 
