@@ -150,9 +150,9 @@ float solve(char *expression, float x, float y) {
                 We've previously made sure that an operation will always have 2 numbers trailing it
                 atoi will change to atof when the string expression can handle decimals and multichar numbers
                 */
-                char str1[1], str2[1]; strncpy(str1,order+i-2,sizeof(str2)), strncpy(str2,order+i-1,sizeof(str2));
-                float first_num = atoi(str1);
-                float second_num = atoi(str2);
+                char str1[1]; strncpy(str1,order+(i-2),sizeof(str1));
+                char str2[1]; strncpy(str2,order+(i-1),sizeof(str2));
+                int first_num = str1[0]-48, second_num = str2[0]-48;
                 int result = evaluate(order[i],first_num,second_num);
                 // Get replacement and operation result it's being replaced with
                 char rep[3]; strncpy(rep,order+i-2,sizeof(rep));
@@ -160,6 +160,7 @@ float solve(char *expression, float x, float y) {
                 char with[size_with]; sprintf(with,"%d",result); // "%d" will turn to %f after upcoming features
                 // Replace order string
                 order = str_replace(order,rep,with);
+                len = strlen(order);
                 operated = 1;
                 break; // Break inner loop and start over
             }
