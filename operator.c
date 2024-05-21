@@ -12,6 +12,10 @@ TO-DO's:
    list types to char *stack[size] and char *queue[size].
  - Making a copy of the input expression using 'strtok' is probably a redundant step. Verify and remove if necessary.
  - When you account for decimals in the algorithm, make sure to switch the return type of evaluate to float
+
+ TIP: When you switch the stack/queue data types, you'll no longer need to account for commas and other stuff 
+ for multichar numbers. You'll just pass in the whole thing as a string. in the pointer list of char **. This 
+ will also solve the solving code block issue you've had in the last commit.
 */
 
 // Taken from: https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
@@ -175,3 +179,13 @@ int main() {
     printf("%.1f\n",soln);
     return 1;
 }
+
+/*
+In the fixes after the data type, first iterate through the expression and pass characters on as if 
+they're strings.
+After, replace all the x and y's with the input numbers.
+At the end, evaluate regarding the code in your first version 
+
+NOTE: The code would work if it wasn't the fix about the data types so you can go off of your 
+previous code version both for reverse-polish notation and solving the reverse-polish in list.
+*/
