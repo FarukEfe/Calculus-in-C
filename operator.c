@@ -126,47 +126,61 @@ float solve(char *expression, float x, float y) {
         }
         token++;
     }
-    // Enqueue remaning items on stack
+    // Enqueue the last number if there's any remaining
+    if (strlen(num) != 0) {
+        enqueue(q_hold,num);
+    }
+    free(num); // Release memory
+    // Enqueue remaning items on stack - RECONSIDR THIS LOOP SINCE IT MIGHT BE REDUNDANT
     char item = pop(s_hold);
     while (item != '\0') {
        enqueue(q_hold,item); 
        item = pop(s_hold);
     }
-    // Print out Reverse-Polished Notation
+    // Print out Reverse-Polished Notation 
+    /*
     for (int i=0;i<=q_hold->head;i++) {
         printf("%c",q_hold->queue[i]);
     }
     printf("\n");
-
+    */
     // Solve the Holding Stack
     char *order = strtok(q_hold->queue,"\0");
     char len = strlen(order);
     int operated;
+    char *str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
+    char *str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
+    char *replacement = (char *)malloc(UNIT_SIZE*sizeof(char)); 
     do {
         operated = 0;
-        for (int i=0;i<len;i++) {
-            if (get_order(order[i]) != -1) {
-                /*
-                We've previously made sure that an operation will always have 2 numbers trailing it
-                atoi will change to atof when the string expression can handle decimals and multichar numbers
-                */
-                char str1[1], str2[1]; strncpy(str1,order+i-2,sizeof(str2)), strncpy(str2,order+i-1,sizeof(str2));
-                float first_num = atoi(str1);
-                float second_num = atoi(str2);
-                int result = evaluate(order[i],first_num,second_num);
-                // Get replacement and operation result it's being replaced with
-                char rep[3]; strncpy(rep,order+i-2,sizeof(rep));
-                int size_with = floor(log(result))-1;
-                char with[size_with]; sprintf(with,"%d",result); // "%d" will turn to %f after upcoming features
-                // Replace order string
-                order = str_replace(order,rep,with);
+        for (int i=0;i<=q_hold->head;i++) {
+            // Only run operation when there's an operator character in queue
+            if (get_order(*(q_hold->queue[i])) != -1 && strlen(q_hold->queue[i]) == 1) {
+                // Get numbers for operation
+                strcpy(str1, q_hold->queue[i-2]);
+                strcpy(str2, q_hold->queue[i-1]);
+                float first_num = atof(str1);
+                float second_num = atof(str2);
+                // Run the operation and replace with the previous indexes in queue
+                float result = evaluate(*(q_hold->queue[i]),first_num,second_num);
+                sprintf(replacement,"%f",result);
+                q_remove(q_hold,i-2);
+                q_remove(q_hold,i-1);
+                q_change(q_hold,i-2,replacement);
                 operated = 1;
-                break; // Break inner loop and start over
+                
+                break;
             }
         }
-    } while (operated); 
+    } while (operated);
+    free(str1); free(str2); free(replacement); // Release memory allocations
 
-    return atof(order);
+    if (q_hold->head != 0) {
+        printf("Syntax error, the equation invalid. Returning 0...\n");
+        return 0;
+    }
+
+    return atof(q_hold->queue[q_hold->head]);
 }
 
 int main() {
@@ -174,3 +188,12 @@ int main() {
     printf("%.1f\n",soln);
     return 1;
 }
+/*
+Gathering examples for test cases:
+"3+4*5-2"
+"3+4*5-11/4"
+"4*5/2+3-8"
+"4*6/5+3-8"
+4.2*5/2+3-8
+42*5/2+30-8
+*/

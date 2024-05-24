@@ -63,18 +63,35 @@ void enqueue(Queue *list, char item) {
     list->tail = 0;
 }
 
-char dequeue(Queue *list) {
-    if (list->head = -1) {
+// Removes one element from queue w.r.t. FIFO
+void dequeue(Queue *list) {
+    if (list->head == -1) {
         printf("The queue is empty.\n");
-        return '\0';
+        return;
     }
-    char item = list->queue[0];
-    for (int i=0;i<list->tail-1;i++) {
-        list->queue[i] = list->queue[i+1];
+    for (int i=0;i<=list->head;i++) {
+        strcpy(list->queue[i],list->queue[i+1]);
     }
+    strncpy(list->queue[list->head],"\0",sizeof(list->queue[list->head]));
     list->head--;
     if (list->head == -1) {
         list->tail = -1;
     }
-    return item;
+}
+
+// Removes queue element at index
+void q_remove(Queue *list, int index) {
+    if (list->head < index || index < 0) {
+        printf("Queue underflow, please populate queue or use a lower index to pop");
+        return;
+    }
+    for (int i=index;i<list->head;i++) {
+        strcpy(list->queue[i],list->queue[i+1]);
+
+    }
+    strncpy(list->queue[list->head],"\0",sizeof(list->queue[list->head]));
+    list->head--;
+    if (list->head == -1) {
+        list->tail = -1;
+    }
 }
