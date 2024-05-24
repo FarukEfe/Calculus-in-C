@@ -6,7 +6,6 @@
 
 /*
 TO-DO's:
- - Evaluate from reverse polished notation
  - Account for brackets and evaporate them when consecutive '(' and ')'
  - Account for multicharacer numbers (including float numbers), might need to switch stack & queue 
    list types to char *stack[size] and char *queue[size].
@@ -99,9 +98,9 @@ int evaluate(char operator, int first, int second) {
 
 float solve(char *expression, float x, float y) {
 
-    if (strlen(expression) == 0) {
-        printf("Solution failed, returning 999 by default.\n");
-        return -999;
+    if (expression == "") {
+        printf("Solution failed, returning 0 by default.\n");
+        return 0;
     }
     // Define holding queue
     Queue *q_hold = create_queue();
@@ -110,13 +109,21 @@ float solve(char *expression, float x, float y) {
     Stack *s_solve = create_stack();
 
     char *token = strtok(expression,"\0");
+    char *str_convert;
+    char *num = (char *)malloc(UNIT_SIZE*sizeof(char));
     while (*token != '\000') {
         // Read through each character
+        if (isdigit(*token) || *token == '.') { // Numbers
+            //strcpy( str_convert , (char[2]) { (char) *token, '\0' } );
+            //enqueue(q_hold,str_convert);
+            strcat(num, (char[2]) { (char) *token, '\0' } );
         if (isdigit(*token)) { // Numbers
             enqueue(q_hold,*token);
         } else if (*token == '(' || *token == ')') { // Brackets
             push(s_hold,*token);
         } else { // Operator
+            enqueue(q_hold,num);
+            strcpy(num,"\0");
             // Pop items from stack until PEDMAS is accomplished
             while (get_order(s_hold->stack[s_hold->head]) > get_order(*token)) {
                 char item = pop(s_hold);
@@ -126,6 +133,11 @@ float solve(char *expression, float x, float y) {
         }
         token++;
     }
+    // Enqueue the last number if there's any remaining
+    if (strlen(num) != 0) {
+        enqueue(q_hold,num);
+    }
+    // Enqueue remaning items on stack
     // Enqueue the last number if there's any remaining
     if (strlen(num) != 0) {
         enqueue(q_hold,num);
@@ -157,10 +169,16 @@ float solve(char *expression, float x, float y) {
             // Only run operation when there's an operator character in queue
             if (get_order(*(q_hold->queue[i])) != -1 && strlen(q_hold->queue[i]) == 1) {
                 // Get numbers for operation
+                char *str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
+                char *str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
+            // Only run operation when there's an operator character in queue
+            if (get_order(*(q_hold->queue[i])) != -1 && strlen(q_hold->queue[i]) == 1) {
+                // Get numbers for operation
                 strcpy(str1, q_hold->queue[i-2]);
                 strcpy(str2, q_hold->queue[i-1]);
                 float first_num = atof(str1);
                 float second_num = atof(str2);
+                // Run the operation and replace with the previous indexes in queue
                 // Run the operation and replace with the previous indexes in queue
                 float result = evaluate(*(q_hold->queue[i]),first_num,second_num);
                 sprintf(replacement,"%f",result);
@@ -184,10 +202,20 @@ float solve(char *expression, float x, float y) {
 }
 
 int main() {
+    float soln = solve("4*6/6+3-8",3.0,8.0);
     float soln = solve("3+4*5-2",3.0,8.0);
     printf("%.1f\n",soln);
     return 1;
 }
+/*
+Gathering examples for test cases:
+"3+4*5-2"
+"3+4*5-11/4"
+"4*5/2+3-8"
+"4*6/5+3-8" -> Returns segfault
+4.2*5/2+3-8
+42*5/2+30-8
+*/
 /*
 Gathering examples for test cases:
 "3+4*5-2"

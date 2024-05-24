@@ -80,11 +80,13 @@ void dequeue(Queue *list) {
 }
 
 // Removes queue element at index
-void q_remove(Queue *list, int index) {
+char *q_remove(Queue *list, int index) {
     if (list->head < index || index < 0) {
         printf("Queue underflow, please populate queue or use a lower index to pop");
         return;
     }
+    char *item = (char *)malloc(UNIT_SIZE*sizeof(char));
+    strcpy(item,list->queue[index]);
     for (int i=index;i<list->head;i++) {
         strcpy(list->queue[i],list->queue[i+1]);
 
@@ -104,3 +106,26 @@ void q_change(Queue *list,int index, char *val) {
     }
     strcpy(list->queue[index],val);
 }
+
+// For Debug
+/*
+int main() {
+    Queue *myqueue = create_queue();
+    enqueue(myqueue,"lol");
+    enqueue(myqueue,"urfunny");
+    enqueue(myqueue,"hope this works");
+    enqueue(myqueue,"hope this works again");
+    enqueue(myqueue,"haha stop");
+    printf("Before:\n");
+    for (int i=0;i<=myqueue->head;i++) {
+        printf("%s\n",myqueue->queue[i]);
+    }
+    q_remove(myqueue,0);
+    q_remove(myqueue,1);
+    printf("After:\n");
+    for (int i=0;i<=myqueue->head;i++) {
+        printf("%s\n",myqueue->queue[i]);
+    }
+    return 1;
+}
+*/
