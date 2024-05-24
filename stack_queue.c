@@ -95,3 +95,12 @@ void q_remove(Queue *list, int index) {
         list->tail = -1;
     }
 }
+
+// Change element at index
+void q_change(Queue *list,int index, char *val) {
+    if (index > list->head) {
+        printf("Index out of range, please pick a lower index.\n");
+        return;
+    }
+    strcpy(list->queue[index],val);
+}
