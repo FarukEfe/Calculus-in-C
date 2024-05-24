@@ -51,9 +51,8 @@ float solve(char *expression, float x, float y) {
     }
     // Define holding queue
     Queue *q_hold = create_queue();
-    // Define holding and solving stacks
+    // Define holding stack
     Stack *s_hold = create_stack();
-    Stack *s_solve = create_stack();
 
     char *token = strtok(expression,"\0");
     char *str_convert;
@@ -98,21 +97,21 @@ float solve(char *expression, float x, float y) {
 
     // Solve the Holding Stack
     int operated;
+    char *str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
+    char *str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
+    char *replacement = (char *)malloc(UNIT_SIZE*sizeof(char)); 
     do {
         operated = 0;
         for (int i=0;i<=q_hold->head;i++) {
             // Only run operation when there's an operator character in queue
             if (get_order(*(q_hold->queue[i])) != -1 && strlen(q_hold->queue[i]) == 1) {
                 // Get numbers for operation
-                char *str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
-                char *str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
                 strcpy(str1, q_hold->queue[i-2]);
                 strcpy(str2, q_hold->queue[i-1]);
                 float first_num = atof(str1);
                 float second_num = atof(str2);
                 // Run the operation and replace with the previous indexes in queue
                 float result = evaluate(*(q_hold->queue[i]),first_num,second_num);
-                char *replacement = (char *)malloc(UNIT_SIZE*sizeof(char)); 
                 sprintf(replacement,"%f",result);
                 q_remove(q_hold,i-2);
                 q_remove(q_hold,i-1);
@@ -129,12 +128,18 @@ float solve(char *expression, float x, float y) {
         return 0;
     }
 
-    return atof(q_hold->queue[q_hold->head]);
+    float result = atof(q_hold->queue[q_hold->head]);
+
+    free(num); // Free number allocation from reverse polishing
+    free(str1); free(str2); free(replacement); // Free operation variables from solving step
+    stack_release(s_hold); q_release(q_hold); // Release stack and queue
+    
+    return result;
 }
 
 
 int main() {
-    float soln = solve("42*5/2+30-8",3.0,8.0);
+    float soln = solve("4.2*5/2+3-8",3.0,8.0);
     printf("%.1f\n",soln);
     return 1;
 }
@@ -144,6 +149,6 @@ Gathering examples for test cases:
 "3+4*5-11/4"
 "4*5/2+3-8"
 "4*6/5+3-8"
-4.2*5/2+3-8
+4.2*5/2+3-80
 42*5/2+30-8
 */

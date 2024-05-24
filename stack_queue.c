@@ -41,6 +41,11 @@ char pop(Stack *list) {
     return val; // We want to return the popped item since we're using it for enqueue in this program
 }
 
+// Free the memory for stack instance
+void stack_release(Stack *list) {
+    free(list);
+}
+
 // Queue data structure
 typedef struct Queue {
     char **queue;
@@ -125,4 +130,13 @@ void q_change(Queue *list,int index,char *new_val) {
         return;
     }
     strcpy(list->queue[index],new_val);
+}
+
+void q_release(Queue *list) {
+    // Free all string allocation from list
+    for (int i=0;i<MAX_SIZE;i++) {
+        free(list->queue[i]);
+    }
+    free(list->queue); // Free queue list
+    free(list); // Free queue structure
 }
