@@ -3,6 +3,7 @@
 #include <string.h>
 
 #define MAX_SIZE 100
+#define UNIT_SIZE 25
 
 // Stack data structure
 typedef struct Stack {
@@ -17,6 +18,7 @@ Stack *create_stack() {
     return data;
 }
 
+// Pushes new element into stack
 void push(Stack *list, char item) {
     if (list->head == MAX_SIZE-1) {
         printf("Stack overflow. Cannot push new item.\n");
@@ -26,6 +28,7 @@ void push(Stack *list, char item) {
     list->stack[list->head] = item;
 }
 
+// Removes element from stack w.r.t. LIFO
 char pop(Stack *list) {
     if (list->head == -1) {
         printf("No items on stack. Already emptied.\n");
@@ -40,7 +43,7 @@ char pop(Stack *list) {
 
 // Queue data structure
 typedef struct Queue {
-    char queue[MAX_SIZE];
+    char **queue;
     int head; // First element index
     int tail; // Last element index
 } Queue;
@@ -48,27 +51,42 @@ typedef struct Queue {
 // Queue methods
 Queue *create_queue() {
     Queue *data = (Queue*)malloc(sizeof(Queue));
+    // Allocate memory for the queue list
+    data->queue = (char **)malloc(MAX_SIZE*sizeof(char *));
+    // Allocate memory for each string in the queue and assign empty string
+    for (int i=0;i<MAX_SIZE;i++) {
+        data->queue[i] = (char *)malloc(UNIT_SIZE*sizeof(char));
+        strncpy(data->queue[i],"\0",sizeof(data->queue[i]));
+    }
     data->head = -1;
     data->tail = -1;
     return data;
 }
 
-void enqueue(Queue *list, char item) {
+// Adds new element to queue
+void enqueue(Queue *list, char *item) {
+    if (strlen(item) > UNIT_SIZE) {
+        printf("Item overflow, please pick a shorter string.\n");
+        return;
+    }
     if (list->head == MAX_SIZE-1) {
         printf("Queue overflow, cannot enqueue new element.\n");
         return;
     }
     list->head++;
-    list->queue[list->head] = item;
+    strcpy(list->queue[list->head],item);
     list->tail = 0;
 }
 
 // Removes one element from queue w.r.t. FIFO
-void dequeue(Queue *list) {
+// REMARK: Always free the item after temporary use!
+char *dequeue(Queue *list) {
     if (list->head == -1) {
         printf("The queue is empty.\n");
-        return;
+        return "\0";
     }
+    char *item = (char *)malloc(UNIT_SIZE*sizeof(char)); 
+    strcpy(item,list->queue[0]);
     for (int i=0;i<=list->head;i++) {
         strcpy(list->queue[i],list->queue[i+1]);
     }
@@ -77,13 +95,14 @@ void dequeue(Queue *list) {
     if (list->head == -1) {
         list->tail = -1;
     }
+    return item;
 }
 
 // Removes queue element at index
 char *q_remove(Queue *list, int index) {
     if (list->head < index || index < 0) {
         printf("Queue underflow, please populate queue or use a lower index to pop");
-        return;
+        return "\0";
     }
     char *item = (char *)malloc(UNIT_SIZE*sizeof(char));
     strcpy(item,list->queue[index]);
@@ -96,36 +115,14 @@ char *q_remove(Queue *list, int index) {
     if (list->head == -1) {
         list->tail = -1;
     }
+    return item;
 }
 
-// Change element at index
-void q_change(Queue *list,int index, char *val) {
+// Copies new value to an existing element in queue
+void q_change(Queue *list,int index,char *new_val) {
     if (index > list->head) {
-        printf("Index out of range, please pick a lower index.\n");
+        printf("Such index doesn't exist in queue.\n");
         return;
     }
-    strcpy(list->queue[index],val);
+    strcpy(list->queue[index],new_val);
 }
-
-// For Debug
-/*
-int main() {
-    Queue *myqueue = create_queue();
-    enqueue(myqueue,"lol");
-    enqueue(myqueue,"urfunny");
-    enqueue(myqueue,"hope this works");
-    enqueue(myqueue,"hope this works again");
-    enqueue(myqueue,"haha stop");
-    printf("Before:\n");
-    for (int i=0;i<=myqueue->head;i++) {
-        printf("%s\n",myqueue->queue[i]);
-    }
-    q_remove(myqueue,0);
-    q_remove(myqueue,1);
-    printf("After:\n");
-    for (int i=0;i<=myqueue->head;i++) {
-        printf("%s\n",myqueue->queue[i]);
-    }
-    return 1;
-}
-*/
