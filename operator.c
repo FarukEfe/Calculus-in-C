@@ -8,6 +8,53 @@ TO-DO's:
  - Account for brackets and evaporate them when consecutive '(' and ')'
 */
 
+// Taken from https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
+char *str_replace(char *orig, char *rep, char *with) {
+    char *result; // the return string
+    char *ins;    // the next insert point
+    char *tmp;    // varies
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of with (the string to replace rep with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // sanity checks and initialization
+    if (!orig || !rep)
+        return NULL;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return NULL; // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // count the number of replacements needed
+    ins = orig;
+    for (count = 0; (tmp = strstr(ins, rep)); ++count) {
+        ins = tmp + len_rep;
+    }
+
+    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep; // move to next "end of rep"
+    }
+    strcpy(tmp, orig);
+    return result;
+}
+
 // This file handles evaluating math expression using stacks and queues
 int get_order(char operator) {
     switch (operator) {
@@ -45,6 +92,10 @@ float evaluate(char operator, float first, float second) {
 
 float solve(char *expression, float x, float y) {
 
+    char *xc = (char *)malloc(UNIT_SIZE*sizeof(char)); sprintf(xc,"%f",x);
+    char *yc = (char *)malloc(UNIT_SIZE*sizeof(char)); sprintf(yc,"%f",y);
+    char *newexpr = str_replace(expression,"x",xc); newexpr = str_replace(newexpr,"y",yc);
+
     if (expression == "") {
         printf("Solution failed, returning 0 by default.\n");
         return 0;
@@ -54,8 +105,8 @@ float solve(char *expression, float x, float y) {
     // Define holding stack
     Stack *s_hold = create_stack();
 
-    char *token = strtok(expression,"\0");
-    char *str_convert;
+    char *token = strtok(newexpr,"\0");
+    char *str_convert = (char *)malloc(2*sizeof(char));
     char *num = (char *)malloc(UNIT_SIZE*sizeof(char));
     while (*token != '\000') {
         // Read through each character
@@ -129,20 +180,33 @@ float solve(char *expression, float x, float y) {
     }
 
     float result = atof(q_hold->queue[q_hold->head]);
-
+    /*
+    free(xc); free(yc); // Free x and y variable strings
     free(num); // Free number allocation from reverse polishing
     free(str1); free(str2); free(replacement); // Free operation variables from solving step
     stack_release(s_hold); q_release(q_hold); // Release stack and queue
-    
+    */
     return result;
 }
 
-
-int main() {
-    float soln = solve("4.2*5/2+3-8",3.0,8.0);
+/*
+int main(int argc, char *argv[]) {
+    if (argc != 6) {
+        printf("Argument count is 4.\n");
+        return 0;
+    }
+    float x1 = atof(argv[2]);
+    float y1 = atof(argv[3]);
+    printf("\nEquation: %s where x = %f and y=%f\n\n",argv[1],x1,y1);
+    float soln = solve(argv[1],x1,y1);
+    printf("%.1f\n",soln);
+    float x2 = atof(argv[4]);
+    float y2 = atof(argv[5]);
+    soln = solve(argv[1],x2,y2);
     printf("%.1f\n",soln);
     return 1;
 }
+*/
 /*
 Gathering examples for test cases:
 "3+4*5-2"
@@ -151,4 +215,5 @@ Gathering examples for test cases:
 "4*6/5+3-8"
 4.2*5/2+3-80
 42*5/2+30-8
+"3+4.23*5.054-2"
 */
