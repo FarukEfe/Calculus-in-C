@@ -1,15 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define MAX_SIZE 100
-#define UNIT_SIZE 25
-
-// Stack data structure
-typedef struct Stack {
-    char stack[MAX_SIZE];
-    int head; // Last element index
-} Stack;
+#include <stackqueue.h>
 
 // Stack methods
 Stack *create_stack() {
@@ -45,13 +34,6 @@ char pop(Stack *list) {
 void stack_release(Stack *list) {
     free(list);
 }
-
-// Queue data structure
-typedef struct Queue {
-    char **queue;
-    int head; // First element index
-    int tail; // Last element index
-} Queue;
 
 // Queue methods
 Queue *create_queue() {

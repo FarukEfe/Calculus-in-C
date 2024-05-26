@@ -1,3 +1,6 @@
+#ifndef DICTIONARY_H
+#define DICTIONARY_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,3 +48,5 @@ PointDictionary *find(char *key);
 Point find_value(char *key);
 PointDictionary *install(char *key, Point *value);
 PointDictionary *generate_directions();
+
+#endif
