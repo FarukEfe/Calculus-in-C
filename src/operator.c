@@ -1,25 +1,12 @@
 #include "stack_queue.c"
-#include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
-#include <math.h>
 
 /*
 TO-DO's:
- - Evaluate from reverse polished notation
  - Account for brackets and evaporate them when consecutive '(' and ')'
- - Account for multicharacer numbers (including float numbers), might need to switch stack & queue 
-   list types to char *stack[size] and char *queue[size].
- - Making a copy of the input expression using 'strtok' is probably a redundant step. Verify and remove if necessary.
- - When you account for decimals in the algorithm, make sure to switch the return type of evaluate to float
-
- TIP: When you switch the stack/queue data types, you'll no longer need to account for commas and other stuff 
- for multichar numbers. You'll just pass in the whole thing as a string. in the pointer list of char **. This 
- will also solve the solving code block issue you've had in the last commit.
 */
 
-// Taken from: https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
-// Will be moved over to a separate file
+// Taken from https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
 char *str_replace(char *orig, char *rep, char *with) {
     char *result; // the return string
     char *ins;    // the next insert point
@@ -86,7 +73,7 @@ int get_order(char operator) {
 The int input and return types will turn to float when the shunting yard algorithm accounts for 
 multichar numbers and decimals
 */
-int evaluate(char operator, int first, int second) {
+float evaluate(char operator, float first, float second) {
     switch (operator) {
         case '-':
             return first-second;
@@ -97,95 +84,106 @@ int evaluate(char operator, int first, int second) {
         case '/':
             return first/second;
         default: // I'll make sure this never happens
-            return 0;
+            return 1;
     }
 }
 
 float solve(char *expression, float x, float y) {
 
-    if (strlen(expression) == 0) {
-        printf("Solution failed, returning 999 by default.\n");
-        return -999;
+    char *xc = (char *)malloc(UNIT_SIZE*sizeof(char)); sprintf(xc,"%f",x);
+    char *yc = (char *)malloc(UNIT_SIZE*sizeof(char)); sprintf(yc,"%f",y);
+    char *newexpr = str_replace(expression,"x",xc); newexpr = str_replace(newexpr,"y",yc);
+
+    if (expression == "") {
+        printf("Solution failed, returning 0 by default.\n");
+        return 0;
     }
     // Define holding queue
     Queue *q_hold = create_queue();
-    // Define holding and solving stacks
+    // Define holding stack
     Stack *s_hold = create_stack();
-    Stack *s_solve = create_stack();
 
-    char *token = strtok(expression,"\0");
+    char *token = strtok(newexpr,"\0");
+    char *str_convert = (char *)malloc(2*sizeof(char));
+    char *num = (char *)malloc(UNIT_SIZE*sizeof(char));
     while (*token != '\000') {
         // Read through each character
-        if (isdigit(*token)) { // Numbers
-            enqueue(q_hold,*token);
+        if (isdigit(*token) || *token == '.') { // Numbers
+            //strcpy( str_convert , (char[2]) { (char) *token, '\0' } );
+            //enqueue(q_hold,str_convert);
+            strcat(num, (char[2]) { (char) *token, '\0' } );
         } else if (*token == '(' || *token == ')') { // Brackets
             push(s_hold,*token);
         } else { // Operator
+            enqueue(q_hold,num);
+            strcpy(num,"\0");
             // Pop items from stack until PEDMAS is accomplished
             while (get_order(s_hold->stack[s_hold->head]) > get_order(*token)) {
                 char item = pop(s_hold);
-                enqueue(q_hold,item);
+                strcpy( str_convert , (char[2]) { (char) item, '\0' } );
+                enqueue(q_hold,str_convert);
             }
             push(s_hold,*token);
         }
         token++;
     }
+    // Enqueue the last number if there's any remaining
+    if (strlen(num) != 0) {
+        enqueue(q_hold,num);
+    }
     // Enqueue remaning items on stack
     char item = pop(s_hold);
     while (item != '\0') {
-       enqueue(q_hold,item); 
-       item = pop(s_hold);
+        strcpy( str_convert , (char[2]) { (char) item, '\0' } );
+        enqueue(q_hold,str_convert); 
+        item = pop(s_hold);
     }
     // Print out Reverse-Polished Notation
+    /*
     for (int i=0;i<=q_hold->head;i++) {
-        printf("%c",q_hold->queue[i]);
+        printf("%d: %s\n",i,q_hold->queue[i]);
     }
     printf("\n");
-
+    */
     // Solve the Holding Stack
-    char *order = strtok(q_hold->queue,"\0");
-    char len = strlen(order);
     int operated;
+    char *str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
+    char *str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
+    char *replacement = (char *)malloc(UNIT_SIZE*sizeof(char)); 
     do {
         operated = 0;
-        for (int i=0;i<len;i++) {
-            if (get_order(order[i]) != -1) {
-                /*
-                We've previously made sure that an operation will always have 2 numbers trailing it
-                atoi will change to atof when the string expression can handle decimals and multichar numbers
-                */
-                char str1[1]; strncpy(str1,order+(i-2),sizeof(str1));
-                char str2[1]; strncpy(str2,order+(i-1),sizeof(str2));
-                int first_num = str1[0]-48, second_num = str2[0]-48;
-                int result = evaluate(order[i],first_num,second_num);
-                // Get replacement and operation result it's being replaced with
-                char rep[3]; strncpy(rep,order+i-2,sizeof(rep));
-                int size_with = floor(log(result))-1;
-                char with[size_with]; sprintf(with,"%d",result); // "%d" will turn to %f after upcoming features
-                // Replace order string
-                order = str_replace(order,rep,with);
-                len = strlen(order);
+        for (int i=0;i<=q_hold->head;i++) {
+            // Only run operation when there's an operator character in queue
+            if (get_order(*(q_hold->queue[i])) != -1 && strlen(q_hold->queue[i]) == 1) {
+                // Get numbers for operation
+                strcpy(str1, q_hold->queue[i-2]);
+                strcpy(str2, q_hold->queue[i-1]);
+                float first_num = atof(str1);
+                float second_num = atof(str2);
+                // Run the operation and replace with the previous indexes in queue
+                float result = evaluate(*(q_hold->queue[i]),first_num,second_num);
+                sprintf(replacement,"%f",result);
+                q_remove(q_hold,i-2);
+                q_remove(q_hold,i-1);
+                q_change(q_hold,i-2,replacement);
                 operated = 1;
-                break; // Break inner loop and start over
+                // Release memory allocations here
+                break;
             }
         }
-    } while (operated); 
+    } while (operated);
 
-    return atof(order);
+    if (q_hold->head != 0) {
+        printf("Syntax error, the equation invalid. Returning 0...\n");
+        return 0;
+    }
+
+    float result = atof(q_hold->queue[q_hold->head]);
+    /*
+    free(xc); free(yc); // Free x and y variable strings
+    free(num); // Free number allocation from reverse polishing
+    free(str1); free(str2); free(replacement); // Free operation variables from solving step
+    stack_release(s_hold); q_release(q_hold); // Release stack and queue
+    */
+    return result;
 }
-
-int main() {
-    float soln = solve("3+4*5-2",3.0,8.0);
-    printf("%.1f\n",soln);
-    return 1;
-}
-
-/*
-In the fixes after the data type, first iterate through the expression and pass characters on as if 
-they're strings.
-After, replace all the x and y's with the input numbers.
-At the end, evaluate regarding the code in your first version 
-
-NOTE: The code would work if it wasn't the fix about the data types so you can go off of your 
-previous code version both for reverse-polish notation and solving the reverse-polish in list.
-*/

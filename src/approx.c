@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     float c = atof(argv[6]);
     float d = atof(argv[7]);
     // (optional) point. for now assign default values, we'll handle user input as enum later
-    Point integral_pt = find_value(argv[8]);
+    Point integral_pt = find_value((argc == 9) ? argv[8] : "NE");
     printf("%.1f %.1f\n",integral_pt.h_point/2.0,integral_pt.v_point/2.0);
 
     // We'll get to this later
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
             // y integrating point: y* = c + (i-v)*dy
             float point_y = c + (y_index-(integral_pt.v_point/2.0))*differential_y;
             // dummy function for testing
-            float res = point_x + point_y;
+            float res = solve(argv[3],point_x,point_y);
             // multiply function result by unit area (dA)
             float unit_approx = res*unit_area;
             total += unit_approx;
@@ -55,4 +55,6 @@ int main(int argc, char *argv[]) {
     }
 
     printf("The total result is %.2f\n",total);
+
+    return 1;
 }

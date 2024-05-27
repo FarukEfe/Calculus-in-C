@@ -1,4 +1,4 @@
-#include "dictionary.h"
+#include <dictionary.h>
 
 /*
 Declare dictionary to match user input strings with appropriate Point instances
