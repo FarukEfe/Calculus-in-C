@@ -1,10 +1,6 @@
 #include "stack_queue.c"
+#include <operator.h>
 #include <ctype.h>
-
-/*
-TO-DO's:
- - Account for brackets and evaporate them when consecutive '(' and ')'
-*/
 
 // Taken from https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
 char *str_replace(char *orig, char *rep, char *with) {
@@ -92,10 +88,36 @@ float evaluate(char operator, float first, float second) {
     }
 }
 
+void create_memory() {
+    // Memory for Reverse Polish
+    xc = (char *)malloc(UNIT_SIZE*sizeof(char));
+    yc = (char *)malloc(UNIT_SIZE*sizeof(char));
+    str_convert = (char *)malloc(2*sizeof(char));
+    num = (char *)malloc(UNIT_SIZE*sizeof(char));
+    // Memory for solving Reverse Polish
+    str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
+    str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
+    replacement = (char *)malloc(UNIT_SIZE*sizeof(char)); 
+}
+/*
+void reset_memory() {
+    xc = ""; yc = ""; str_convert = ""; num = "";
+    str1 = ""; str2 = ""; replacement = "";
+}
+*/
+void release_memory() {
+    free(xc); free(yc); // Free x and y variable strings
+    free(num); // Free number allocation from reverse polishing
+    free(str1); free(str2); free(replacement); // Free operation variables from solving step
+    // stack_release(s_hold); q_release(q_hold); // Release stack and queue
+}
+
 float solve(char *expression, float x, float y) {
 
-    char *xc = (char *)malloc(UNIT_SIZE*sizeof(char)); sprintf(xc,"%f",x);
-    char *yc = (char *)malloc(UNIT_SIZE*sizeof(char)); sprintf(yc,"%f",y);
+    create_memory(); // Defined in this file, allocates memory for the task
+
+    sprintf(xc,"%f",x);
+    sprintf(yc,"%f",y);
     char *newexpr = str_replace(expression,"x",xc); newexpr = str_replace(newexpr,"y",yc);
 
     if (expression == "") {
@@ -108,13 +130,9 @@ float solve(char *expression, float x, float y) {
     Stack *s_hold = create_stack();
 
     char *token = strtok(newexpr,"\0");
-    char *str_convert = (char *)malloc(2*sizeof(char));
-    char *num = (char *)malloc(UNIT_SIZE*sizeof(char));
     while (*token != '\000') {
         // Read through each character
         if (isdigit(*token) || *token == '.') { // Numbers
-            //strcpy( str_convert , (char[2]) { (char) *token, '\0' } );
-            //enqueue(q_hold,str_convert);
             strcat(num, (char[2]) { (char) *token, '\0' } );
         } else if (*token == '(') { // Brackets
             push(s_hold,*token);
@@ -146,18 +164,9 @@ float solve(char *expression, float x, float y) {
         enqueue(q_hold,str_convert); 
         item = pop(s_hold);
     }
-    // Print out Reverse-Polished Notation
-    /*
-    for (int i=0;i<=q_hold->head;i++) {
-        printf("%d: %s\n",i,q_hold->queue[i]);
-    }
-    printf("\n");
-    */
+
     // Solve the Holding Stack
     int operated;
-    char *str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
-    char *str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
-    char *replacement = (char *)malloc(UNIT_SIZE*sizeof(char)); 
     do {
         operated = 0;
         for (int i=0;i<=q_hold->head;i++) {
@@ -187,11 +196,6 @@ float solve(char *expression, float x, float y) {
     }
 
     float result = atof(q_hold->queue[q_hold->head]);
-    /*
-    free(xc); free(yc); // Free x and y variable strings
-    free(num); // Free number allocation from reverse polishing
-    free(str1); free(str2); free(replacement); // Free operation variables from solving step
-    stack_release(s_hold); q_release(q_hold); // Release stack and queue
-    */
+
     return result;
 }

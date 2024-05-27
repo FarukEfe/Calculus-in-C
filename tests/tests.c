@@ -47,10 +47,12 @@ int main(int argc, char *argv[]) {
             successes++;
         }
 
-        printf("Expected: %f / Answer: %f (error: %f%%) (Passed %d out of %d)\n",ans,test_result,error,successes,tests);
+        printf("Expected: %.5f / Answer: %.5f (error: %.5f%%) (Passed %d out of %d)\n",ans,test_result,error,successes,tests);
     }
 
     printf("\nPassed %d out of %d test cases.\n\n",successes,tests);
+
+    release_memory(); // Defined in operator.c, releases allocated memory after all jobs are over
 
     return 1;
 }

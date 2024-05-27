@@ -56,5 +56,7 @@ int main(int argc, char *argv[]) {
 
     printf("The total result is %.2f\n",total);
 
+    release_memory(); // Defined in operator.c, used to release the allocated memory at the end of tasks.
+
     return 1;
 }
