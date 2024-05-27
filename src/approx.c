@@ -55,4 +55,6 @@ int main(int argc, char *argv[]) {
     }
 
     printf("The total result is %.2f\n",total);
+
+    return 1;
 }

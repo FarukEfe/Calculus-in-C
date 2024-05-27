@@ -10,7 +10,7 @@ Stack *create_stack() {
 // Pushes new element into stack
 void push(Stack *list, char item) {
     if (list->head == MAX_SIZE-1) {
-        printf("Stack overflow. Cannot push new item.\n");
+        //printf("Stack overflow. Cannot push new item.\n");
         return;
     }
     list->head++;
@@ -20,7 +20,7 @@ void push(Stack *list, char item) {
 // Removes element from stack w.r.t. LIFO
 char pop(Stack *list) {
     if (list->head == -1) {
-        printf("No items on stack. Already emptied.\n");
+        //printf("No items on stack. Already emptied.\n");
         return '\0';
     }
     char *copy = strtok(list->stack,"\0"); // Copy stack
@@ -53,11 +53,11 @@ Queue *create_queue() {
 // Adds new element to queue
 void enqueue(Queue *list, char *item) {
     if (strlen(item) > UNIT_SIZE) {
-        printf("Item overflow, please pick a shorter string.\n");
+        //printf("Item overflow, please pick a shorter string.\n");
         return;
     }
     if (list->head == MAX_SIZE-1) {
-        printf("Queue overflow, cannot enqueue new element.\n");
+        //printf("Queue overflow, cannot enqueue new element.\n");
         return;
     }
     list->head++;
@@ -69,7 +69,7 @@ void enqueue(Queue *list, char *item) {
 // REMARK: Always free the item after temporary use!
 char *dequeue(Queue *list) {
     if (list->head == -1) {
-        printf("The queue is empty.\n");
+        //printf("The queue is empty.\n");
         return "\0";
     }
     char *item = (char *)malloc(UNIT_SIZE*sizeof(char)); 
@@ -88,7 +88,7 @@ char *dequeue(Queue *list) {
 // Removes queue element at index
 char *q_remove(Queue *list, int index) {
     if (list->head < index || index < 0) {
-        printf("Queue underflow, please populate queue or use a lower index to pop");
+        //printf("Queue underflow, please populate queue or use a lower index to pop");
         return "\0";
     }
     char *item = (char *)malloc(UNIT_SIZE*sizeof(char));
@@ -108,7 +108,7 @@ char *q_remove(Queue *list, int index) {
 // Copies new value to an existing element in queue
 void q_change(Queue *list,int index,char *new_val) {
     if (index > list->head) {
-        printf("Such index doesn't exist in queue.\n");
+        //printf("Such index doesn't exist in queue.\n");
         return;
     }
     strcpy(list->queue[index],new_val);

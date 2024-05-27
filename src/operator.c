@@ -139,11 +139,12 @@ float solve(char *expression, float x, float y) {
         item = pop(s_hold);
     }
     // Print out Reverse-Polished Notation
+    /*
     for (int i=0;i<=q_hold->head;i++) {
         printf("%d: %s\n",i,q_hold->queue[i]);
     }
     printf("\n");
-
+    */
     // Solve the Holding Stack
     int operated;
     char *str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
@@ -186,32 +187,3 @@ float solve(char *expression, float x, float y) {
     */
     return result;
 }
-
-/*
-int main(int argc, char *argv[]) {
-    if (argc != 6) {
-        printf("Argument count is 4.\n");
-        return 0;
-    }
-    float x1 = atof(argv[2]);
-    float y1 = atof(argv[3]);
-    printf("\nEquation: %s where x = %f and y=%f\n\n",argv[1],x1,y1);
-    float soln = solve(argv[1],x1,y1);
-    printf("%.1f\n",soln);
-    float x2 = atof(argv[4]);
-    float y2 = atof(argv[5]);
-    soln = solve(argv[1],x2,y2);
-    printf("%.1f\n",soln);
-    return 1;
-}
-*/
-/*
-Gathering examples for test cases:
-"3+4*5-2"
-"3+4*5-11/4"
-"4*5/2+3-8"
-"4*6/5+3-8"
-4.2*5/2+3-80
-42*5/2+30-8
-"3+4.23*5.054-2"
-*/
