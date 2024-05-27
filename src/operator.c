@@ -64,8 +64,12 @@ int get_order(char operator) {
             return 3;
         case '/':
             return 4;
-        default:
+        case ')':
+            return 0;
+        case '(':
             return -1;
+        default:
+            return -99;
     }
 }
 
@@ -112,7 +116,7 @@ float solve(char *expression, float x, float y) {
             //strcpy( str_convert , (char[2]) { (char) *token, '\0' } );
             //enqueue(q_hold,str_convert);
             strcat(num, (char[2]) { (char) *token, '\0' } );
-        } else if (*token == '(' || *token == ')') { // Brackets
+        } else if (*token == '(') { // Brackets
             push(s_hold,*token);
         } else { // Operator
             enqueue(q_hold,num);
@@ -123,7 +127,11 @@ float solve(char *expression, float x, float y) {
                 strcpy( str_convert , (char[2]) { (char) item, '\0' } );
                 enqueue(q_hold,str_convert);
             }
-            push(s_hold,*token);
+            if (*token != ')') {
+                push(s_hold,*token);
+            } else {
+                pop(s_hold);
+            }
         }
         token++;
     }
@@ -154,7 +162,7 @@ float solve(char *expression, float x, float y) {
         operated = 0;
         for (int i=0;i<=q_hold->head;i++) {
             // Only run operation when there's an operator character in queue
-            if (get_order(*(q_hold->queue[i])) != -1 && strlen(q_hold->queue[i]) == 1) {
+            if (get_order(*(q_hold->queue[i])) > 0 && strlen(q_hold->queue[i]) == 1) {
                 // Get numbers for operation
                 strcpy(str1, q_hold->queue[i-2]);
                 strcpy(str2, q_hold->queue[i-1]);
