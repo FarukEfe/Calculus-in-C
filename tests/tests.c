@@ -28,6 +28,8 @@ int main(int argc, char *argv[]) {
     int tests = 0;
     int successes = 0;
 
+    create_memory(); // Defined in operator.c, allocates memory for the expression solving task
+
     while(getline(&current,&buffer,fptr) != -1) {
         char *expression = strtok(current," ");
         char *x_str = strtok(NULL," ");

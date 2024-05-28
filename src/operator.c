@@ -99,12 +99,17 @@ void create_memory() {
     str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
     replacement = (char *)malloc(UNIT_SIZE*sizeof(char)); 
 }
-/*
+
 void reset_memory() {
-    xc = ""; yc = ""; str_convert = ""; num = "";
-    str1 = ""; str2 = ""; replacement = "";
+    memset(xc,0,UNIT_SIZE*sizeof(char));
+    memset(yc,0,UNIT_SIZE*sizeof(char));
+    memset(str_convert,0,2*sizeof(char));
+    memset(num,0,UNIT_SIZE*sizeof(char));
+    memset(str1,0,UNIT_SIZE*sizeof(char));
+    memset(str2,0,UNIT_SIZE*sizeof(char));
+    memset(replacement,0,UNIT_SIZE*sizeof(char));
 }
-*/
+
 void release_memory() {
     free(xc); free(yc); // Free x and y variable strings
     free(num); // Free number allocation from reverse polishing
@@ -113,9 +118,6 @@ void release_memory() {
 }
 
 float solve(char *expression, float x, float y) {
-
-    create_memory(); // Defined in this file, allocates memory for the task
-
     sprintf(xc,"%f",x);
     sprintf(yc,"%f",y);
     char *newexpr = str_replace(expression,"x",xc); newexpr = str_replace(newexpr,"y",yc);
@@ -196,6 +198,9 @@ float solve(char *expression, float x, float y) {
     }
 
     float result = atof(q_hold->queue[q_hold->head]);
+
+    reset_memory(); // Defined in this file, resets allocated memory
+    stack_release(s_hold); q_release(q_hold); // Free stack and queue at the end of task
 
     return result;
 }

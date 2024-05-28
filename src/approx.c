@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     float differential_y = (d-c)/n;
     float unit_area = differential_x*differential_y;
 
-    //printf("%.2f %.2f %.2f\n",differential_x,differential_y,unit_area);
+    create_memory(); // Defined in operator.c, creates memory for solve() tasks beforehand
 
     float total = 0.0;
     for (int x_index = 1;x_index<=m;x_index++) {

@@ -11,6 +11,10 @@ all: a.out
 a.out:
 	$(CC) ./src/approx.c $(CFLAGS) -o $@
 
+
+log:
+	$(VCC) ./src/approx.c $(CFLAGS) -o $@
+
 leak:
 	$(VCC) --leak-check=full \
          	--show-leak-kinds=all \
@@ -30,6 +34,9 @@ clean:
 
 test:
 	$(CC) ./tests/tests.c $(CFLAGS) $(TFLAGS) -o $@
+
+logtest:
+	$(VCC) -s ./tests/tests.c $(CFLAGS) $(TFLAGS) -o $@
 
 leaktest:
 	$(VCC) --leak-check=full \ 
