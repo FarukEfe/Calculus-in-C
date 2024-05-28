@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     float d = atof(argv[7]);
     // (optional) point. for now assign default values, we'll handle user input as enum later
     Point integral_pt = find_value((argc == 9) ? argv[8] : "NE");
-    printf("%.1f %.1f\n",integral_pt.h_point/2.0,integral_pt.v_point/2.0);
+    //printf("%.1f %.1f\n",integral_pt.h_point/2.0,integral_pt.v_point/2.0);
 
     // We'll get to this later
     char *f_str = argv[3];
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     float differential_y = (d-c)/n;
     float unit_area = differential_x*differential_y;
 
-    printf("%.2f %.2f %.2f\n",differential_x,differential_y,unit_area);
+    //printf("%.2f %.2f %.2f\n",differential_x,differential_y,unit_area);
 
     float total = 0.0;
     for (int x_index = 1;x_index<=m;x_index++) {
