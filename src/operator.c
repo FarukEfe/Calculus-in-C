@@ -101,13 +101,13 @@ void create_memory() {
 }
 
 void reset_memory() {
-    memset(xc,0,UNIT_SIZE*sizeof(char));
-    memset(yc,0,UNIT_SIZE*sizeof(char));
-    memset(str_convert,0,2*sizeof(char));
-    memset(num,0,UNIT_SIZE*sizeof(char));
-    memset(str1,0,UNIT_SIZE*sizeof(char));
-    memset(str2,0,UNIT_SIZE*sizeof(char));
-    memset(replacement,0,UNIT_SIZE*sizeof(char));
+    strcpy(xc,"\0");
+    strcpy(yc,"\0");
+    strcpy(str_convert,"\0");
+    strcpy(num,"\0");
+    strcpy(str1,"\0");
+    strcpy(str2,"\0");
+    strcpy(replacement,"\0");
 }
 
 void release_memory() {
@@ -118,6 +118,9 @@ void release_memory() {
 }
 
 float solve(char *expression, float x, float y) {
+
+    reset_memory(); // Defined in this file, resets allocated memory
+    
     sprintf(xc,"%f",x);
     sprintf(yc,"%f",y);
     char *newexpr = str_replace(expression,"x",xc); newexpr = str_replace(newexpr,"y",yc);
@@ -166,7 +169,13 @@ float solve(char *expression, float x, float y) {
         enqueue(q_hold,str_convert); 
         item = pop(s_hold);
     }
-
+    // Print out Reverse Polish Notation (for Debug)
+    
+    for (int i=0;i<=q_hold->head;i++) {
+        printf("Elem %d: %s\n",i,q_hold->queue[i]);
+    }
+    printf("\n");
+    
     // Solve the Holding Stack
     int operated;
     do {
@@ -188,6 +197,11 @@ float solve(char *expression, float x, float y) {
                 operated = 1;
                 // Release memory allocations here
                 break;
+            } else if (strlen(q_hold->queue[i]) == 0) {
+                // If theres an empty slot, remove it and restart iteration
+                q_remove(q_hold,i);
+                operated = 1;
+                break;
             }
         }
     } while (operated);
@@ -199,8 +213,7 @@ float solve(char *expression, float x, float y) {
 
     float result = atof(q_hold->queue[q_hold->head]);
 
-    reset_memory(); // Defined in this file, resets allocated memory
-    stack_release(s_hold); q_release(q_hold); // Free stack and queue at the end of task
+    // stack_release(s_hold); q_release(q_hold); // Free stack and queue at the end of task
 
     return result;
 }

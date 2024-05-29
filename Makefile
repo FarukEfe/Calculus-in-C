@@ -11,7 +11,6 @@ all: a.out
 a.out:
 	$(CC) ./src/approx.c $(CFLAGS) -o $@
 
-
 log:
 	$(VCC) ./src/approx.c $(CFLAGS) -o $@
 
