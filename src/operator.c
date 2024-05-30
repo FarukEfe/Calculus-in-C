@@ -170,12 +170,12 @@ float solve(char *expression, float x, float y) {
         item = pop(s_hold);
     }
     // Print out Reverse Polish Notation (for Debug)
-    
+    /*
     for (int i=0;i<=q_hold->head;i++) {
         printf("Elem %d: %s\n",i,q_hold->queue[i]);
     }
     printf("\n");
-    
+    */
     // Solve the Holding Stack
     int operated;
     do {

@@ -54,7 +54,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    printf("The total result is %.2f\n",total);
+    printf("x-bounds: %.2f<x<%.2f\n",a,b);
+    printf("y-bounds: %.2f<y<%.2f\n",c,d);
+    printf("# small rectangles (m*n): %d\n",m*n);
+    printf("f(x,y): %s\n",argv[3]);
+    printf("Integral Approximate is %.2f\n",total);
 
     release_memory(); // Defined in operator.c, used to release the allocated memory at the end of tasks.
 
