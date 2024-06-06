@@ -3,7 +3,7 @@ SRCDIR = src/
 
 CC = gcc
 VCC = valgrind
-CFLAGS = -g -lncurses -I$(IDIR)
+CFLAGS = -g -lm -lncurses -I$(IDIR)
 TFLAGS = -I$(SRCDIR)
 
 all: a.out

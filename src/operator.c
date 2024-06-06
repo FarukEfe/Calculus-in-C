@@ -1,6 +1,7 @@
 #include "stack_queue.c"
 #include <operator.h>
 #include <ctype.h>
+#include <math.h>
 
 // Taken from https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
 char *str_replace(char *orig, char *rep, char *with) {
@@ -55,11 +56,13 @@ int get_order(char operator) {
         case '-':
             return 1;
         case '+':
-            return 2;
+            return 1;
         case '*':
-            return 3;
+            return 2;
         case '/':
-            return 4;
+            return 2;
+        case '^':
+            return 3;
         case ')':
             return 0;
         case '(':
@@ -83,6 +86,8 @@ float evaluate(char operator, float first, float second) {
             return first*second;
         case '/':
             return first/second;
+        case '^':
+            return pow(first,second);
         default: // I'll make sure this never happens
             return 1;
     }
@@ -145,7 +150,7 @@ float solve(char *expression, float x, float y) {
             enqueue(q_hold,num);
             strcpy(num,"\0");
             // Pop items from stack until PEDMAS is accomplished
-            while (get_order(s_hold->stack[s_hold->head]) > get_order(*token)) {
+            while (get_order(s_hold->stack[s_hold->head]) >= get_order(*token)) {
                 char item = pop(s_hold);
                 strcpy( str_convert , (char[2]) { (char) item, '\0' } );
                 enqueue(q_hold,str_convert);
