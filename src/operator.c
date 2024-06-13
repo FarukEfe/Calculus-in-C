@@ -50,7 +50,6 @@ char *str_replace(char *orig, char *rep, char *with) {
     return result;
 }
 
-// This file handles evaluating math expression using stacks and queues
 int get_order(char operator) {
     switch (operator) {
         case '-':
@@ -69,6 +68,14 @@ int get_order(char operator) {
             return -1;
         default:
             return -99;
+    }
+}
+
+char *get_special(char *sp) {
+    if (sp == "pi") {
+        return "22/7";
+    } else if (sp == "e") {
+        return "2.71828183";
     }
 }
 
