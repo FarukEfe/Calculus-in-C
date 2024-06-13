@@ -3,6 +3,8 @@
 #include <ctype.h>
 #include <math.h>
 
+// MARK: METHODS USED IN SHUNTING YARD
+
 // Taken from https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
 char *str_replace(char *orig, char *rep, char *with) {
     char *result; // the return string
@@ -71,14 +73,6 @@ int get_order(char operator) {
     }
 }
 
-char *get_special(char *sp) {
-    if (sp == "pi") {
-        return "22/7";
-    } else if (sp == "e") {
-        return "2.71828183";
-    }
-}
-
 /*
 The int input and return types will turn to float when the shunting yard algorithm accounts for 
 multichar numbers and decimals
@@ -100,6 +94,8 @@ float evaluate(char operator, float first, float second) {
     }
 }
 
+// MARK: MEMORY ALLOCATIONS FROM HEADER
+
 void create_memory() {
     // Memory for Reverse Polish
     xc = (char *)malloc(UNIT_SIZE*sizeof(char));
@@ -109,7 +105,7 @@ void create_memory() {
     // Memory for solving Reverse Polish
     str1 = (char *)malloc(UNIT_SIZE*sizeof(char));
     str2 = (char *)malloc(UNIT_SIZE*sizeof(char));
-    replacement = (char *)malloc(UNIT_SIZE*sizeof(char)); 
+    rep = (char *)malloc(UNIT_SIZE*sizeof(char)); 
 }
 
 void reset_memory() {
@@ -119,15 +115,17 @@ void reset_memory() {
     strcpy(num,"\0");
     strcpy(str1,"\0");
     strcpy(str2,"\0");
-    strcpy(replacement,"\0");
+    strcpy(rep,"\0");
 }
 
 void release_memory() {
     free(xc); free(yc); // Free x and y variable strings
     free(num); // Free number allocation from reverse polishing
-    free(str1); free(str2); free(replacement); // Free operation variables from solving step
+    free(str1); free(str2); free(rep); // Free operation variables from solving step
     // stack_release(s_hold); q_release(q_hold); // Release stack and queue
 }
+
+// MARK: SOLVE A GIVEN EXPRESSION USING SHUNTING YARD ALGORITHM WITH REVERSE-POLISH
 
 float solve(char *expression, float x, float y) {
 
@@ -136,6 +134,9 @@ float solve(char *expression, float x, float y) {
     sprintf(xc,"%f",x);
     sprintf(yc,"%f",y);
     char *newexpr = str_replace(expression,"x",xc); newexpr = str_replace(newexpr,"y",yc);
+    for (int i=0;i<REPCOUNT;i++) {
+        newexpr = str_replace(newexpr,replaced[i],replacing[i]);
+    }
 
     if (expression == "") {
         printf("Solution failed, returning 0 by default.\n");
@@ -202,10 +203,10 @@ float solve(char *expression, float x, float y) {
                 float second_num = atof(str2);
                 // Run the operation and replace with the previous indexes in queue
                 float result = evaluate(*(q_hold->queue[i]),first_num,second_num);
-                sprintf(replacement,"%f",result);
+                sprintf(rep,"%f",result);
                 q_remove(q_hold,i-2);
                 q_remove(q_hold,i-1);
-                q_change(q_hold,i-2,replacement);
+                q_change(q_hold,i-2,rep);
                 operated = 1;
                 // Release memory allocations here
                 break;
